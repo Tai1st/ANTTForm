@@ -140,11 +140,10 @@ select.error {
 }
 
 
-table {
+.table-wrapper table {
   min-width: 900px; /* điều chỉnh theo số cột và kích thước input */
   border-collapse: collapse;
 }
-
 table input,
 table select {
   font-size: 12px;         /* nhỏ hơn để vừa hơn */
@@ -163,3 +162,4 @@ table thead th {
 table td input {
   min-width: 120px;
 }
+
