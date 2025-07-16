@@ -134,61 +134,32 @@ select.error {
   width: 80%;
   overflow-x: auto; /* cho phép cuộn ngang */
 }
-table {
-  min-width: 900px; /* hoặc chiều rộng tối thiểu bạn muốn */
-  border-collapse: collapse;
-  table-layout: fixed; 
-  /* cố định chiều rộng cột */
-}
-
-table th, table td {
-  padding: 6px 8px;
-  text-align: center;
-  vertical-align: middle;
-  word-wrap: break-word;
-  font-size: 14px;
-}
-
-/* Thu nhỏ input/select trong table */
-table input[type="text"],
-table input[type="tel"],
-table select {
-  width: 100%;
-  max-width: 130px; /* hoặc chỉnh theo ý */
-  padding: 4px 6px;
-  font-size: 14px;
-  box-sizing: border-box;
-}
-
-/* Nút lưu nhỏ gọn */
-table button {
-  padding: 6px 12px;
-  font-size: 14px;
-}
-
-/* Cho phép bảng cuộn ngang trên màn hình nhỏ */
-.table-container {
-  overflow-x: auto;
-}
 .table-wrapper {
   overflow-x: auto;
-  width: 100%; /* hoặc width cố định nếu muốn */
-  -webkit-overflow-scrolling: touch; /* mượt trên iOS */
+  width: 100%;
 }
 
 
-/* Thu nhỏ hơn cho màn hình nhỏ */
-@media (max-width: 768px) {
-  table input[type="text"],
-  table input[type="tel"],
-  table select {
-    max-width: 90px;
-    font-size: 12px;
-    padding: 3px 5px;
-  }
+table {
+  min-width: 900px; /* điều chỉnh theo số cột và kích thước input */
+  border-collapse: collapse;
+}
 
-  table button {
-    padding: 4px 8px;
-    font-size: 12px;
-  }
+table input,
+table select {
+  font-size: 12px;         /* nhỏ hơn để vừa hơn */
+  padding: 4px 6px;
+  width: auto;             /* không cố định width */
+  min-width: 60px;        /* hoặc thấp hơn nếu cần */
+  white-space: nowrap;     /* giữ chữ trên một dòng */
+  overflow: visible;       /* không ẩn nội dung */
+}
+
+table thead th {
+  font-size: 12px;
+  padding: 8px 5px;
+}
+
+table td input {
+  min-width: 120px;
 }
