@@ -88,26 +88,28 @@
     <div class="table-container" id="tableSection" style="display:none;">
         <h3>Danh sách đã gửi</h3>
         <input type="text" id="searchInput" class="form-control mb-2" placeholder="Tìm kiếm..." />
-        <table class="table table-striped table-bordered table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>#</th>
-                    <th>Họ tên</th>
-                    <th>Ngày sinh</th>
-                    <th>Giới tính</th>
-                    <th>Chức vụ</th>
-                    <th>Thôn</th>
-                    <th>Dân tộc</th>
-                    <th>SĐT</th>
-                    <th>Hành động</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                <tr>
-                    <td colspan="9" class="text-center">Chưa có dữ liệu</td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="table-wrapper">
+            <table class="table table-striped table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Họ tên</th>
+                        <th>Ngày sinh</th>
+                        <th>Giới tính</th>
+                        <th>Chức vụ</th>
+                        <th>Thôn</th>
+                        <th>Dân tộc</th>
+                        <th>SĐT</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr>
+                        <td colspan="9" class="text-center">Chưa có dữ liệu</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <button class="btn btn-outline-dark w-100" id="backBtn">🔙 Quay lại nhập</button>
     </div>
 
