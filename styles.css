@@ -1,0 +1,132 @@
+/* styles.css */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #b30000 url('https://sso.dancuquocgia.gov.vn/_next/static/media/background-login.312c6c01.png') no-repeat center center;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+.logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+  /* bỏ background trắng nếu có */
+  /* background: none; */
+}
+
+.logo-image {
+  height: 100px;
+  margin-bottom: 10px;
+}
+
+.logo-title {
+  font-size: 30px;
+  font-weight: bold;
+  color: #ffd700; /* vàng */
+  text-shadow: 0 0 3px rgba(0,0,0,0.6); /* làm nổi chữ */
+}
+
+
+.form-container {
+  background: white;
+  margin-top: 30px;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 480px;
+}
+
+.form-container h3 {
+  font-size: 20px;
+  color: #b30000;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 12px;
+  margin-top: 6px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+button {
+  background-color: #b30000;
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #7a0000;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+label {
+  font-weight: 600;
+  color: #b30000;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+.error-msg {
+  font-size: 13px;
+  color: red;
+  margin-top: 4px;
+}
+
+input.error,
+select.error {
+  border-color: red;
+}
+
+#message {
+  margin-top: 15px;
+  font-weight: bold;
+  text-align: center;
+  display: none;
+}
+
+.datepicker {
+  z-index: 9999 !important;
+}
+
+.input-icon-wrapper {
+  position: relative;
+}
+
+.input-icon-wrapper i.fa-calendar {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  pointer-events: none;
+}
+
+#viewListBtn {
+  margin-top: 8px; /* hoặc khoảng cách bạn muốn */
+}

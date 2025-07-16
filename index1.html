@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ANTT Xã Đliê Ya</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/css/bootstrap-datepicker.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #b30000 url('https://sso.dancuquocgia.gov.vn/_next/static/media/background-login.312c6c01.png') no-repeat center center;
+      background-size: cover;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+
+    .logo-image {
+      height: 100px;
+    }
+
+    .logo-title {
+      font-size: 30px;
+      font-weight: bold;
+      color: #ffd700;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+      text-align: center;
+    }
+
+    .form-container {
+      background: white;
+      margin-top: 30px;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 480px;
+    }
+
+    .form-container h3 {
+      font-size: 20px;
+      color: #b30000;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #b30000;
+      color: white;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #7a0000;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    label {
+      font-weight: 600;
+      color: #b30000;
+      text-transform: uppercase;
+      font-size: 14px;
+    }
+
+    .error-msg {
+      font-size: 13px;
+      color: red;
+      margin-top: 4px;
+    }
+
+    input.error,
+    select.error {
+      border-color: red;
+    }
+
+    #message {
+      margin-top: 15px;
+      font-weight: bold;
+      text-align: center;
+      display: none;
+    }
+
+    .datepicker {
+      z-index: 9999 !important;
+    }
+
+    .input-icon-wrapper {
+      position: relative;
+    }
+
+    .input-icon-wrapper i.fa-calendar {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #888;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="logo-container">
+    <img class="logo-image" src="https://i.ibb.co/mVLQ5B2j/image-removebg-preview.png" alt="Logo ANTT" />
+    <div class="logo-title">ANTT Xã Đliê Ya</div>
+  </div>
+
+  <div class="form-container">
+    <h3>Nhập thông tin</h3>
+    <form id="dataForm" autocomplete="off">
+      <div class="field">
+        <label for="name">Họ tên</label>
+        <input type="text" id="name" name="name" placeholder="Nhập họ tên" />
+        <div class="error-msg"></div>
+      </div>
+
+      <div class="field">
+        <label for="birthdate">Ngày, tháng, năm sinh</label>
+        <div class="input-icon-wrapper">
+          <input type="text" id="birthdate" name="date" class="form-control" placeholder="dd/mm/yyyy" autocomplete="off" maxlength="10" />
+          <i class="fa fa-calendar"></i>
+        </div>
+        <div class="error-msg"></div>
+      </div>
+
+      <div class="field">
+        <label for="gender">Giới tính</label>
+        <select id="gender" name="gender">
+          <option value="">-- Chọn giới tính --</option>
+          <option value="Nam">Nam</option>
+          <option value="Nữ">Nữ</option>
+          <option value="Khác">Khác</option>
+        </select>
+        <div class="error-msg"></div>
+      </div>
+
+      <div class="field">
+        <label for="position">Chức vụ</label>
+        <select id="position" name="position">
+          <option value="">-- Chọn chức vụ --</option>
+          <option value="Tổ Trưởng">Tổ Trưởng</option>
+          <option value="Tổ Phó">Tổ Phó</option>
+          <option value="Thành Viên">Thành Viên</option>
+        </select>
+        <div class="error-msg"></div>
+      </div>
+
+      <div class="field">
+        <label for="village">Thôn</label>
+        <input type="text" id="village" name="village" placeholder="Tên thôn" />
+        <div class="error-msg"></div>
+      </div>
+
+      <div class="field">
+        <label for="ethnicity">Dân tộc</label>
+        <input type="text" id="ethnicity" name="ethnicity" placeholder="Tên dân tộc" />
+        <div class="error-msg"></div>
+      </div>
+
+      <div class="field">
+        <label for="phone">Số điện thoại</label>
+        <input type="tel" id="phone" name="phone" placeholder="VD: 0912345678" maxlength="11" />
+        <div class="error-msg"></div>
+      </div>
+
+      <button type="submit" id="submit-button">Gửi thông tin</button>
+      <div id="message"></div>
+    </form>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/js/bootstrap-datepicker.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/locales/bootstrap-datepicker.vi.min.js"></script>
+
+  <script>
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycby6mcbkJTTMbnEb_rJB6iXzgClTpSJ4zMbVLpNBDyy35wzToQFiAiitBXN7mIbIUNr1EA/exec";
+
+    $('#birthdate').datepicker({
+      format: "dd/mm/yyyy",
+      endDate: "0d",
+      autoclose: true,
+      todayHighlight: true,
+      language: 'vi'
+    });
+
+    // Tự động viết hoa các input: name, village, ethnicity
+    ['name', 'village', 'ethnicity'].forEach(id => {
+      const input = document.getElementById(id);
+      if (input) {
+        input.addEventListener('input', () => {
+          input.value = input.value.toUpperCase();
+        });
+      }
+    });
+
+    // Tự động thêm dấu / khi nhập ngày tháng năm sinh
+    const birthdateInput = document.getElementById('birthdate');
+    birthdateInput.addEventListener('input', function (e) {
+      let val = this.value.replace(/[^\d]/g, ''); // bỏ ký tự không phải số
+      if (val.length > 2 && val.length <= 4) {
+        val = val.slice(0, 2) + '/' + val.slice(2);
+      } else if (val.length > 4) {
+        val = val.slice(0, 2) + '/' + val.slice(2, 4) + '/' + val.slice(4, 8);
+      }
+      this.value = val;
+    });
+
+    document.getElementById("dataForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const formData = new FormData(form);
+      const messageEl = document.getElementById("message");
+      const submitBtn = document.getElementById("submit-button");
+      let valid = true;
+
+      messageEl.style.display = "none";
+
+      // Xóa tất cả lỗi cũ
+      form.querySelectorAll(".error-msg").forEach(el => el.textContent = "");
+      form.querySelectorAll("input, select").forEach(el => el.classList.remove("error"));
+
+      // Kiểm tra từng trường bắt buộc
+      const requiredFields = ['name', 'date', 'gender', 'position', 'village', 'ethnicity', 'phone'];
+      requiredFields.forEach(key => {
+        const input = key === 'date' ? document.getElementById('birthdate') : document.getElementById(key);
+        const errorDiv = input.closest('.field').querySelector('.error-msg');
+        let value = formData.get(key);
+        if (!value || !value.trim()) {
+          valid = false;
+          input.classList.add("error");
+          errorDiv.textContent = "Trường này không được để trống.";
+        }
+      });
+
+      // Kiểm tra số điện thoại
+      const phoneInput = document.getElementById('phone');
+      const phoneError = phoneInput.closest('.field').querySelector('.error-msg');
+      const phoneVal = formData.get('phone');
+      if (phoneVal && !/^[0-9]{10,11}$/.test(phoneVal)) {
+        valid = false;
+        phoneInput.classList.add("error");
+        phoneError.textContent = "Số điện thoại phải từ 10 đến 11 chữ số.";
+      }
+
+      // Kiểm tra ngày tháng năm sinh và tuổi >= 16
+      const birthStr = formData.get("date");
+      const birthInput = document.getElementById("birthdate");
+      const birthError = birthInput.closest('.field').querySelector('.error-msg');
+      if (birthStr && birthStr.trim()) {
+        const parts = birthStr.split("/");
+        if (parts.length !== 3) {
+          valid = false;
+          birthInput.classList.add("error");
+          birthError.textContent = "Ngày sinh không đúng định dạng dd/mm/yyyy.";
+        } else {
+          const [d, m, y] = parts.map(Number);
+          if (isNaN(d) || isNaN(m) || isNaN(y) || d < 1 || d > 31 || m < 1 || m > 12 || y < 1900) {
+            valid = false;
+            birthInput.classList.add("error");
+            birthError.textContent = "Ngày sinh không hợp lệ.";
+          } else {
+            const birthDate = new Date(y, m - 1, d);
+            if (birthDate.getDate() !== d || birthDate.getMonth() !== m - 1 || birthDate.getFullYear() !== y) {
+              valid = false;
+              birthInput.classList.add("error");
+              birthError.textContent = "Ngày sinh không hợp lệ.";
+            } else {
+              const today = new Date();
+              let age = today.getFullYear() - y;
+              if (
+                today.getMonth() < m - 1 ||
+                (today.getMonth() === m - 1 && today.getDate() < d)
+              ) {
+                age--;
+              }
+              if (age < 16) {
+                valid = false;
+                birthInput.classList.add("error");
+                birthError.textContent = "Phải từ 16 tuổi trở lên.";
+              }
+            }
+          }
+        }
+      }
+
+      if (!valid) {
+        messageEl.textContent = "❌ Vui lòng kiểm tra và điền đầy đủ thông tin hợp lệ.";
+        messageEl.style.color = "red";
+        messageEl.style.display = "block";
+        return;
+      }
+
+      messageEl.textContent = "Đang gửi dữ liệu...";
+      messageEl.style.color = "#333";
+      messageEl.style.display = "block";
+      submitBtn.disabled = true;
+
+      // Chuẩn bị dữ liệu gửi
+      const keyValuePairs = [];
+      for (const [key, value] of formData.entries()) {
+        let upperValue = typeof value === 'string' ? value.toUpperCase() : value;
+        if (key === 'phone') upperValue = "'" + upperValue;
+        keyValuePairs.push(encodeURIComponent(key) + "=" + encodeURIComponent(upperValue));
+      }
+
+      fetch(WEBAPP_URL, {
+        method: "POST",
+        body: keyValuePairs.join("&"),
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "success") {
+            messageEl.textContent = "✅ Gửi thành công!";
+            messageEl.style.color = "green";
+            form.reset();
+          } else {
+            throw new Error(data.message || "Đã có lỗi xảy ra.");
+          }
+        })
+        .catch(err => {
+          messageEl.textContent = "❌ Gửi thất bại: " + err.message;
+          messageEl.style.color = "red";
+        })
+        .finally(() => {
+          submitBtn.disabled = false;
+          setTimeout(() => {
+            messageEl.style.display = "none";
+          }, 4000);
+        });
+    });
+  </script>
+</body>
+
+</html>
