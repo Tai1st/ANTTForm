@@ -190,11 +190,13 @@ document.getElementById("dataForm").addEventListener("submit", function (e) {
 
 let dataCache = [];
 
-document.getElementById("viewListBtn").onclick = () => {
-  document.getElementById("formSection").style.display = "none";
-  document.getElementById("tableSection").style.display = "block";
-  loadTable();
+document.getElementById('viewListBtn').onclick = () => {
+  document.getElementById('formSection').style.display = 'none';
+  document.getElementById('tableSection').style.display = 'block';
+  loadFromLocalStorage();
+  fetchAndRender(); // <-- Hàm này lấy dữ liệu mới từ Google Sheets
 };
+
 document.getElementById("backBtn").onclick = () => {
   document.getElementById("tableSection").style.display = "none";
   document.getElementById("formSection").style.display = "block";
