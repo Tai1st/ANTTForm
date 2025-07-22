@@ -255,11 +255,16 @@ document.getElementById("backBtn").onclick = () => {
 };
 
 document.getElementById("searchInput").addEventListener("input", function () {
-  const q = this.value.trim().toUpperCase();
+  const q = normalizeVietnamese(this.value.trim());
 
   document.querySelectorAll("#tableBody tr").forEach((tr) => {
-    const nameInput = tr.querySelector('input[data-field="name"]');
-    const name = nameInput?.value?.toUpperCase() || "";
+    const nameCell = tr.querySelector("td:nth-child(2)");
+    if (!nameCell) return;
+
+    const inputName = nameCell.querySelector("input");
+    if (!inputName) return;
+
+    const name = normalizeVietnamese(inputName.value);
 
     if (name.includes(q)) {
       tr.style.display = "";
@@ -268,6 +273,7 @@ document.getElementById("searchInput").addEventListener("input", function () {
     }
   });
 });
+
 
 // Format ngày sinh về dd/mm/yyyy
 function formatDate(d) {
