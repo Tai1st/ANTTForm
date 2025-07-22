@@ -405,6 +405,8 @@ function loadFromLocalStorage() {
     if (cache) {
       const parsed = JSON.parse(cache);
       renderTable(parsed);
+      refreshTablePagination();
+
     }
   } catch (e) {
     console.warn("Không thể tải từ localStorage");
@@ -418,6 +420,8 @@ function fetchAndRender() {
     .then((data) => {
       localStorage.setItem("dataCache", JSON.stringify(data));
       renderTable(data);
+      refreshTablePagination();
+
     })
     .catch((err) => {
       console.error("Không thể tải dữ liệu:", err.message);
@@ -501,6 +505,97 @@ function showLoading() {
 
 function hideLoading() {
   document.getElementById('loadingOverlay').style.display = 'none';
+}
+
+
+const rowsPerPage = 10;
+let currentPage = 1;
+const tableBody = document.getElementById("tableBody");
+const pagination = document.getElementById("pagination");
+
+function displayTablePage(page) {
+  currentPage = page;
+  const rows = Array.from(tableBody.querySelectorAll("tr"));
+  const totalRows = rows.length;
+  const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+  // Ẩn tất cả dòng
+  rows.forEach(row => (row.style.display = "none"));
+
+  // Hiển thị các dòng của trang hiện tại
+  const start = (page - 1) * rowsPerPage;
+  const end = Math.min(start + rowsPerPage, totalRows);
+  for (let i = start; i < end; i++) {
+    rows[i].style.display = "";
+  }
+
+  renderPagination(totalPages);
+}
+
+function renderPagination(totalPages) {
+  pagination.innerHTML = "";
+
+  const maxPagesToShow = 4;
+  let startPage = 1;
+  let endPage = totalPages;
+
+  if (totalPages > maxPagesToShow) {
+    // Tính startPage sao cho trang hiện tại nằm trong khoảng hiển thị
+    startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+    endPage = startPage + maxPagesToShow - 1;
+
+    // Không vượt quá tổng số trang
+    if (endPage > totalPages) {
+      endPage = totalPages;
+      startPage = endPage - maxPagesToShow + 1;
+    }
+  } else {
+    startPage = 1;
+    endPage = totalPages;
+  }
+
+  // Prev button
+  const prev = document.createElement("li");
+  prev.className = "page-item " + (currentPage === 1 ? "disabled" : "");
+  prev.innerHTML = `<a class="page-link" href="#">Prev</a>`;
+  prev.onclick = e => {
+    e.preventDefault();
+    if (currentPage > 1) displayTablePage(currentPage - 1);
+  };
+  pagination.appendChild(prev);
+
+  // Page numbers trong khoảng startPage đến endPage
+  for (let i = startPage; i <= endPage; i++) {
+    const li = document.createElement("li");
+    li.className = "page-item " + (i === currentPage ? "active" : "");
+    li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+    li.onclick = e => {
+      e.preventDefault();
+      displayTablePage(i);
+    };
+    pagination.appendChild(li);
+  }
+
+  // Next button
+  const next = document.createElement("li");
+  next.className = "page-item " + (currentPage === totalPages ? "disabled" : "");
+  next.innerHTML = `<a class="page-link" href="#">Next</a>`;
+  next.onclick = e => {
+    e.preventDefault();
+    if (currentPage < totalPages) displayTablePage(currentPage + 1);
+  };
+  pagination.appendChild(next);
+}
+
+
+// Hàm gọi mỗi khi cập nhật dữ liệu bảng
+function refreshTablePagination() {
+  const rows = tableBody.querySelectorAll("tr");
+  if (rows.length === 0 || (rows.length === 1 && rows[0].querySelector("td").colSpan > 1)) {
+    pagination.innerHTML = "";
+    return;
+  }
+  displayTablePage(1);
 }
 
 // Khởi động
