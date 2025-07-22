@@ -1,5 +1,55 @@
+const ETHNICITY_OPTIONS = [
+  "Kinh",
+  "Tày",
+  "Thái",
+  "Mường",
+  "Khơ Mú",
+  "Hoa",
+  "Nùng",
+  "HMông",
+  "Dao",
+  "Gia Rai",
+  "Ê Đê",
+  "Ba Na",
+  "Xơ Đăng",
+  "Sán Chay",
+  "Cơ Ho",
+  "Chăm",
+  "Sán Dìu",
+  "Hrê",
+  "Ra Glai",
+  "Mnông",
+  "Thổ",
+  "Giáy",
+  "Cơ Tu",
+  "Giẻ Triêng",
+  "Mạ",
+  "Khơ Rưng",
+  "Xtiêng",
+  "Bru - Vân Kiều",
+  "Thái Đen",
+  "Thái Trắng",
+  "Thái Đỏ",
+  "Phù Lá",
+  "La Chí",
+  "La Ha",
+  "Lô Lô",
+  "Chứt",
+  "Ngái",
+  "Ơ Đu",
+  "Rơ Măm",
+  "Brâu",
+  "Kháng",
+  "Xinh Mun",
+  "Cống",
+  "Si La",
+  "Pu Péo",
+  "Lự",
+];
+const OLD_COMMUNE_OPTIONS = ["ĐLIÊ YA", "EA TOH", "EA TÂN"];
+const ROLE_OPTIONS = ["TỔ TRƯỞNG", "TỔ PHÓ", "THÀNH VIÊN"];
 const WEBAPP_URL =
-  "https://script.google.com/macros/s/AKfycbyLiqJO8WbeZOd3tjKvcVtvtQcU4QwS6UqYU8GDa1iBAQ_U14LIF1BUg4_uyvmZVQGpBA/exec";
+  "https://script.google.com/macros/s/AKfycbzXaPF1kg6eK8r_El0ABzfI5DlA87D9a0pd8CrmkH8mbkG44nGZLscYxrRiWqBFo4wN4g/exec";
 
 $("#birthdate").datepicker({
   format: "dd/mm/yyyy",
@@ -51,16 +101,18 @@ document.getElementById("dataForm").addEventListener("submit", function (e) {
   // Kiểm tra các trường bắt buộc
   const requiredFields = [
     "name",
-    "date",
+    "birthdate",
+    "age",
     "gender",
     "position",
     "village",
+    "old_commune",
     "ethnicity",
     "phone",
   ];
   requiredFields.forEach((key) => {
     const input =
-      key === "date"
+      key === "birthdate"
         ? document.getElementById("birthdate")
         : document.getElementById(key);
     const errorDiv = input.closest(".field").querySelector(".error-msg");
@@ -83,7 +135,7 @@ document.getElementById("dataForm").addEventListener("submit", function (e) {
   }
 
   // Kiểm tra ngày sinh và tuổi >= 16
-  const birthStr = formData.get("date");
+  const birthStr = formData.get("birthdate");
   const birthInput = document.getElementById("birthdate");
   const birthError = birthInput.closest(".field").querySelector(".error-msg");
   if (birthStr && birthStr.trim()) {
@@ -190,9 +242,9 @@ document.getElementById("dataForm").addEventListener("submit", function (e) {
 
 let dataCache = [];
 
-document.getElementById('viewListBtn').onclick = () => {
-  document.getElementById('formSection').style.display = 'none';
-  document.getElementById('tableSection').style.display = 'block';
+document.getElementById("viewListBtn").onclick = () => {
+  document.getElementById("formSection").style.display = "none";
+  document.getElementById("tableSection").style.display = "block";
   loadFromLocalStorage();
   fetchAndRender(); // <-- Hàm này lấy dữ liệu mới từ Google Sheets
 };
@@ -216,8 +268,6 @@ document.getElementById("searchInput").addEventListener("input", function () {
     }
   });
 });
-
-const ROLE_OPTIONS = ["TỔ TRƯỞNG", "TỔ PHÓ", "THÀNH VIÊN"];
 
 // Format ngày sinh về dd/mm/yyyy
 function formatDate(d) {
@@ -244,49 +294,52 @@ function renderTable(data) {
   const tbody = document.getElementById("tableBody");
   tbody.innerHTML = "";
   if (!data.length) {
-    tbody.innerHTML = `<tr><td colspan="10" class="text-center text-danger">Không có dữ liệu</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="11" class="text-center text-danger">Không có dữ liệu</td></tr>`;
     return;
   }
 
   data.forEach((item, index) => {
     const tr = document.createElement("tr");
     const date = formatDate(item.date);
+    const age = calculateAgeFromDateString(date) ?? ""; // tính tuổi
 
     tr.innerHTML = `
       <td>${index + 1}</td>
-      <td><input data-index="${index}" data-field="name" value="${
-      item.name
-    }" /></td>
+      <td><input data-index="${index}" data-field="name" value="${item.name}" /></td>
       <td><input data-index="${index}" data-field="date" value="${date}" /></td>
+      <td>${age}</td> <!-- Thêm cột tuổi -->
       <td>
         <select data-index="${index}" data-field="gender">
-          <option value="Nam" ${
-            item.gender === "Nam" ? "selected" : ""
-          }>Nam</option>
-          <option value="Nữ" ${
-            item.gender === "Nữ" ? "selected" : ""
-          }>Nữ</option>
+          <option value="Nam" ${item.gender === "Nam" ? "selected" : ""}>Nam</option>
+          <option value="Nữ" ${item.gender === "Nữ" ? "selected" : ""}>Nữ</option>
         </select>
       </td>
       <td>
         <select data-index="${index}" data-field="position">
           ${ROLE_OPTIONS.map(
             (role) =>
-              `<option value="${role}" ${
-                item.position === role ? "selected" : ""
-              }>${role}</option>`
+              `<option value="${role}" ${item.position === role ? "selected" : ""}>${role}</option>`
           ).join("")}
         </select>
       </td>
-      <td><input data-index="${index}" data-field="village" value="${
-      item.village
-    }" /></td>
-      <td><input data-index="${index}" data-field="ethnicity" value="${
-      item.ethnicity
-    }" /></td>
-      <td><input data-index="${index}" data-field="phone" value="${
-      item.phone
-    }" /></td>
+      <td><input data-index="${index}" data-field="village" value="${item.village}" /></td>
+      <td>
+        <select data-index="${index}" data-field="old_commune">
+          ${OLD_COMMUNE_OPTIONS.map(
+            (commune) =>
+              `<option value="${commune}" ${item.old_commune === commune ? "selected" : ""}>${commune}</option>`
+          ).join("")}
+        </select>
+      </td>
+      <td>
+        <select data-index="${index}" data-field="ethnicity">
+          ${ETHNICITY_OPTIONS.map(
+            (eth) =>
+              `<option value="${eth}" ${item.ethnicity === eth ? "selected" : ""}>${eth}</option>`
+          ).join("")}
+        </select>
+      </td>
+      <td><input data-index="${index}" data-field="phone" value="${item.phone}" /></td>
       <td><button class="save-btn btn btn-success btn-sm" data-index="${index}">Lưu</button></td>
     `;
     tbody.appendChild(tr);
@@ -294,6 +347,7 @@ function renderTable(data) {
 
   bindSaveButtons(data);
 }
+
 
 // Gắn sự kiện cho các nút "Lưu"
 function bindSaveButtons(data) {
@@ -360,6 +414,103 @@ function fetchAndRender() {
       console.error("Không thể tải dữ liệu:", err.message);
     });
 }
+// Tạo gợi ý cho trường dân tộc
+function normalizeVietnamese(str) {
+  return str
+    .normalize("NFD") // tách chữ và dấu
+    .replace(/[\u0300-\u036f]/g, "") // bỏ dấu
+    .toLowerCase();
+}
+
+// Tạo dropdown gợi ý cho trường dân tộc
+const ethnicityInput = document.getElementById("ethnicity");
+let dropdown;
+
+function createDropdown() {
+  dropdown = document.createElement("ul");
+  dropdown.style.position = "absolute";
+  dropdown.style.zIndex = "1000";
+  dropdown.style.background = "#fff";
+  dropdown.style.border = "1px solid #ccc";
+  dropdown.style.listStyleType = "none";
+  dropdown.style.padding = "0";
+  dropdown.style.margin = "0";
+  dropdown.style.maxHeight = "150px";
+  dropdown.style.overflowY = "auto";
+  dropdown.style.width = ethnicityInput.offsetWidth + "px";
+  dropdown.style.cursor = "pointer";
+  document.body.appendChild(dropdown);
+}
+
+function closeDropdown() {
+  if (dropdown) {
+    dropdown.remove();
+    dropdown = null;
+  }
+}
+
+ethnicityInput.addEventListener("input", function () {
+  const val = this.value.trim();
+  closeDropdown();
+  if (!val) return;
+
+  const valNorm = normalizeVietnamese(val);
+
+  const matches = ETHNICITY_OPTIONS.filter((eth) =>
+    normalizeVietnamese(eth).includes(valNorm)
+  );
+
+  if (matches.length === 0) return;
+
+  createDropdown();
+
+  const rect = ethnicityInput.getBoundingClientRect();
+  dropdown.style.top = rect.bottom + window.scrollY + "px";
+  dropdown.style.left = rect.left + window.scrollX + "px";
+
+  matches.forEach((match) => {
+    const li = document.createElement("li");
+    li.textContent = match;
+    li.style.padding = "5px 10px";
+    li.addEventListener("mousedown", (e) => {
+      e.preventDefault(); // tránh mất focus input
+      ethnicityInput.value = match.toUpperCase();
+      closeDropdown();
+    });
+    dropdown.appendChild(li);
+  });
+});
+
+document.addEventListener("click", (e) => {
+  if (e.target !== ethnicityInput && dropdown && !dropdown.contains(e.target)) {
+    closeDropdown();
+  }
+});
+
+function calculateAgeFromDateString(dateStr) {
+  const parts = dateStr.split("/");
+  if (parts.length !== 3) return null;
+  const [d, m, y] = parts.map(Number);
+  if (
+    isNaN(d) || isNaN(m) || isNaN(y) ||
+    d < 1 || d > 31 || m < 1 || m > 12 || y < 1900
+  ) return null;
+
+  const birthDate = new Date(y, m - 1, d);
+  const today = new Date();
+
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const mDiff = today.getMonth() - birthDate.getMonth();
+  if (mDiff < 0 || (mDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age >= 0 ? age : null;
+}
+const ageInput = document.getElementById("age");
+birthdateInput.addEventListener("input", () => {
+  const age = calculateAgeFromDateString(birthdateInput.value);
+  ageInput.value = age !== null ? age : "";
+});
 
 // Khởi động
 loadFromLocalStorage();
