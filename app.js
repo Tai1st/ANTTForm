@@ -1,55 +1,55 @@
 const ETHNICITY_OPTIONS = [
-  "Kinh",
-  "Tày",
-  "Thái",
-  "Mường",
-  "Khơ Mú",
-  "Hoa",
-  "Nùng",
-  "HMông",
-  "Dao",
-  "Gia Rai",
-  "Ê Đê",
-  "Ba Na",
-  "Xơ Đăng",
-  "Sán Chay",
-  "Cơ Ho",
-  "Chăm",
-  "Sán Dìu",
-  "Hrê",
-  "Ra Glai",
-  "Mnông",
-  "Thổ",
-  "Giáy",
-  "Cơ Tu",
-  "Giẻ Triêng",
-  "Mạ",
-  "Khơ Rưng",
-  "Xtiêng",
-  "Bru - Vân Kiều",
-  "Thái Đen",
-  "Thái Trắng",
-  "Thái Đỏ",
-  "Phù Lá",
-  "La Chí",
-  "La Ha",
-  "Lô Lô",
-  "Chứt",
-  "Ngái",
-  "Ơ Đu",
-  "Rơ Măm",
-  "Brâu",
-  "Kháng",
-  "Xinh Mun",
-  "Cống",
-  "Si La",
-  "Pu Péo",
-  "Lự",
+  "KINH",
+  "TÀY",
+  "THÁI",
+  "MƯỜNG",
+  "KHƠ MÚ",
+  "HOA",
+  "NÙNG",
+  "HMÔNG",
+  "DAO",
+  "GIA RAI",
+  "Ê ĐÊ",
+  "BA NA",
+  "XƠ ĐĂNG",
+  "SÁN CHAY",
+  "CƠ HO",
+  "CHĂM",
+  "SÁN DÌU",
+  "HRÊ",
+  "RA GLAI",
+  "MNÔNG",
+  "THỔ",
+  "GIÁY",
+  "CƠ TU",
+  "GIẺ TRIÊNG",
+  "MẠ",
+  "KHƠ RƯNG",
+  "XTIÊNG",
+  "BRU - VÂN KIỀU",
+  "THÁI ĐEN",
+  "THÁI TRẮNG",
+  "THÁI ĐỎ",
+  "PHÙ LÁ",
+  "LA CHÍ",
+  "LA HA",
+  "LÔ LÔ",
+  "CHỨT",
+  "NGÁI",
+  "Ơ ĐU",
+  "RƠ MĂM",
+  "BRAU",
+  "KHÁNG",
+  "XINH MUN",
+  "CỐNG",
+  "SI LA",
+  "PU PÉO",
+  "LỰ"
 ];
 const OLD_COMMUNE_OPTIONS = ["ĐLIÊ YA", "EA TOH", "EA TÂN"];
 const ROLE_OPTIONS = ["TỔ TRƯỞNG", "TỔ PHÓ", "THÀNH VIÊN"];
 const WEBAPP_URL =
-  "https://script.google.com/macros/s/AKfycbzXaPF1kg6eK8r_El0ABzfI5DlA87D9a0pd8CrmkH8mbkG44nGZLscYxrRiWqBFo4wN4g/exec";
+  "https://script.google.com/macros/s/AKfycbzRmpuD2BxWWI1-9jCTqUE8hLu5jftmxIZYRJGVp_DgcjEQab54sfJnGGx3X1kKPpMssg/exec";
 
 $("#birthdate").datepicker({
   format: "dd/mm/yyyy",
@@ -60,7 +60,7 @@ $("#birthdate").datepicker({
 });
 
 // Viết hoa tự động các trường name, village, ethnicity
-["name", "village", "ethnicity"].forEach((id) => {
+["name", "village","old_commune", "ethnicity"].forEach((id) => {
   const input = document.getElementById(id);
   if (input) {
     input.addEventListener("input", () => {
@@ -102,7 +102,6 @@ document.getElementById("dataForm").addEventListener("submit", function (e) {
   const requiredFields = [
     "name",
     "birthdate",
-    "age",
     "gender",
     "position",
     "village",
@@ -300,14 +299,13 @@ function renderTable(data) {
 
   data.forEach((item, index) => {
     const tr = document.createElement("tr");
-    const date = formatDate(item.date);
-    const age = calculateAgeFromDateString(date) ?? ""; // tính tuổi
+    const birthdate = formatDate(item.birthdate);
 
     tr.innerHTML = `
       <td>${index + 1}</td>
       <td><input data-index="${index}" data-field="name" value="${item.name}" /></td>
-      <td><input data-index="${index}" data-field="date" value="${date}" /></td>
-      <td>${age}</td> <!-- Thêm cột tuổi -->
+      <td><input data-index="${index}" data-field="birthdate" value="${birthdate}" /></td>
+      <td>${item.age ?? ""}</td> <!-- Thêm cột tuổi -->
       <td>
         <select data-index="${index}" data-field="gender">
           <option value="Nam" ${item.gender === "Nam" ? "selected" : ""}>Nam</option>
@@ -485,31 +483,6 @@ document.addEventListener("click", (e) => {
   if (e.target !== ethnicityInput && dropdown && !dropdown.contains(e.target)) {
     closeDropdown();
   }
-});
-
-function calculateAgeFromDateString(dateStr) {
-  const parts = dateStr.split("/");
-  if (parts.length !== 3) return null;
-  const [d, m, y] = parts.map(Number);
-  if (
-    isNaN(d) || isNaN(m) || isNaN(y) ||
-    d < 1 || d > 31 || m < 1 || m > 12 || y < 1900
-  ) return null;
-
-  const birthDate = new Date(y, m - 1, d);
-  const today = new Date();
-
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const mDiff = today.getMonth() - birthDate.getMonth();
-  if (mDiff < 0 || (mDiff === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
-  return age >= 0 ? age : null;
-}
-const ageInput = document.getElementById("age");
-birthdateInput.addEventListener("input", () => {
-  const age = calculateAgeFromDateString(birthdateInput.value);
-  ageInput.value = age !== null ? age : "";
 });
 
 // Khởi động
