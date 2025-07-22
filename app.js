@@ -89,7 +89,7 @@ document.getElementById("dataForm").addEventListener("submit", function (e) {
   const messageEl = document.getElementById("message");
   const submitBtn = document.getElementById("submit-button");
   let valid = true;
-
+  
   messageEl.style.display = "none";
 
   // Xóa lỗi cũ
@@ -199,7 +199,7 @@ document.getElementById("dataForm").addEventListener("submit", function (e) {
   messageEl.style.color = "#333";
   messageEl.style.display = "block";
   submitBtn.disabled = true;
-
+   showLoading();
   // Chuẩn bị dữ liệu gửi lên Google Sheets
   const keyValuePairs = [];
   for (const [key, value] of formData.entries()) {
@@ -233,6 +233,7 @@ document.getElementById("dataForm").addEventListener("submit", function (e) {
     })
     .finally(() => {
       submitBtn.disabled = false;
+       hideLoading(); // Ẩn spinner
       setTimeout(() => {
         messageEl.style.display = "none";
       }, 4000);
@@ -351,39 +352,49 @@ function renderTable(data) {
 function bindSaveButtons(data) {
   document.querySelectorAll(".save-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const index = parseInt(btn.getAttribute("data-index"), 10);
-      const row = document.querySelectorAll("#tableBody tr")[index];
-      const inputs = row.querySelectorAll("input, select");
+  const index = parseInt(btn.getAttribute("data-index"), 10);
+  const row = document.querySelectorAll("#tableBody tr")[index];
+  const inputs = row.querySelectorAll("input, select");
 
-      const updatedData = {
-        rowIndex: index + 2,
-      };
+  const updatedData = {
+    rowIndex: index + 2,
+  };
 
-      inputs.forEach((input) => {
-        const field = input.getAttribute("data-field");
-        updatedData[field] = input.value.toUpperCase();
-      });
+  inputs.forEach((input) => {
+    const field = input.getAttribute("data-field");
+    updatedData[field] = input.value.toUpperCase();
+  });
 
-      fetch(WEBAPP_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(updatedData),
-      })
-        .then((res) => res.json())
-        .then((json) => {
-          if (json.status === "success") {
-            alert("✅ Lưu thành công!");
-            // Cập nhật localStorage
-            data[index] = updatedData;
-            localStorage.setItem("dataCache", JSON.stringify(data));
-          } else {
-            alert("❌ Lỗi: " + json.message);
-          }
-        })
-        .catch((err) => {
-          alert("❌ Kết nối thất bại: " + err.message);
-        });
+  // Hiện spinner trong nút
+  btn.disabled = true;
+   showLoading();
+  const originalText = btn.innerHTML;
+  btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang lưu...`;
+
+  fetch(WEBAPP_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams(updatedData),
+  })
+    .then((res) => res.json())
+    .then((json) => {
+      if (json.status === "success") {
+        alert("✅ Lưu thành công!");
+        data[index] = updatedData;
+        localStorage.setItem("dataCache", JSON.stringify(data));
+      } else {
+        alert("❌ Lỗi: " + json.message);
+      }
+    })
+    .catch((err) => {
+      alert("❌ Kết nối thất bại: " + err.message);
+    })
+    .finally(() => {
+      btn.disabled = false;
+      hideLoading(); // Ẩn spinner
+      btn.innerHTML = originalText;
     });
+});
   });
 }
 
@@ -484,6 +495,13 @@ document.addEventListener("click", (e) => {
     closeDropdown();
   }
 });
+function showLoading() {
+  document.getElementById('loadingOverlay').style.display = 'flex';
+}
+
+function hideLoading() {
+  document.getElementById('loadingOverlay').style.display = 'none';
+}
 
 // Khởi động
 loadFromLocalStorage();

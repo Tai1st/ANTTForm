@@ -37,8 +37,6 @@
                 </div>
                 <div class="error-msg"></div>
             </div>
-            <input type="hidden" id="age" name="age" />
-
 
             <div class="field">
                 <label for="gender">Giới tính</label>
@@ -130,6 +128,11 @@
         <button class="btn btn-outline-dark w-100" id="backBtn">
             🔙 Quay lại nhập
         </button>
+    </div>
+    <div id="loadingOverlay" style="display:none;">
+        <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
