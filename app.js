@@ -46,6 +46,67 @@ const ETHNICITY_OPTIONS = [
   "PU PÉO",
   "LỰ",
 ];
+const VILLAGE_OPTIONS = [
+    "BÌNH AN",
+    "BUÔN ĐÉT",
+    "EA BI",
+    "EA BLÔNG",
+    "EA CHĂM",
+    "EA CHIÊU",
+    "EA ĐINH",
+    "EA ĐỐC",
+    "EA HEO",
+    "EA KANH",
+    "EA KRÁI",
+    "EA LÊ",
+    "EA NGAI",
+    "EA SIM",
+    "HẢI HÀ",
+    "LIÊN KẾT",
+    "QUANG TRUNG",
+    "QUYẾT TÂM",
+    "TÂN AN",
+    "TÂN BẮC",
+    "TÂN BẰNG",
+    "TÂN CHÂU",
+    "TÂN HÀ",
+    "TÂN HIỆP",
+    "TÂN HỢP",
+    "TÂN NAM",
+    "TÂN PHÚ",
+    "TÂN QUẢNG",
+    "TÂN THÀNH",
+    "TÂN TIẾN",
+    "TÂN TRUNG A",
+    "TÂN TRUNG B",
+    "TÂN YÊN",
+    "THANH CAO",
+    "THỐNG NHẤT",
+    "TRUNG HOÀ",
+    "YÊN KHÁNH",
+    "BẮC TRUNG",
+    "BUÔN DLIEYA A",
+    "BUÔN DLIÊYA B",
+    "BUÔN EA DUA",
+    "BUÔN JÚK",
+    "BUÔN KAI",
+    "BUÔN KMANG",
+    "BUÔN KSƠR",
+    "BUÔN TLEH",
+    "BUÔN YOH",
+    "BUÔN YUN",
+    "ĐOÀN KẾT",
+    "ĐỒNG TIẾN",
+    "EA CHIÊU 1",
+    "EA RUẾ",
+    "EABI",
+    "EAKRAI",
+    "EANGAI",
+    "TAN LỘC",
+    "TÂN KỲ",
+    "TÂN MỸ"
+];
+
 const GENDER_OPTIONS = ["NAM", "NỮ"];
 const OLD_COMMUNE_OPTIONS = ["ĐLIÊ YA", "EA TOH", "EA TÂN"];
 const ROLE_OPTIONS = ["TỔ TRƯỞNG", "TỔ PHÓ", "THÀNH VIÊN"];
@@ -540,6 +601,72 @@ function fetchAndRender() {
       console.error("Không thể tải dữ liệu:", err.message);
     });
 }
+
+const villageInput = document.getElementById("village");
+let villageDropdown;
+
+function createVillageDropdown() {
+  villageDropdown = document.createElement("ul");
+  villageDropdown.style.position = "absolute";
+  villageDropdown.style.zIndex = "1000";
+  villageDropdown.style.background = "#fff";
+  villageDropdown.style.border = "1px solid #ccc";
+  villageDropdown.style.listStyleType = "none";
+  villageDropdown.style.padding = "0";
+  villageDropdown.style.margin = "0";
+  villageDropdown.style.maxHeight = "150px";
+  villageDropdown.style.overflowY = "auto";
+  villageDropdown.style.width = villageInput.offsetWidth + "px";
+  document.body.appendChild(villageDropdown);
+}
+
+function closeVillageDropdown() {
+  if (villageDropdown) {
+    villageDropdown.remove();
+    villageDropdown = null;
+  }
+}
+
+villageInput.addEventListener("input", function () {
+  const val = this.value.trim();
+  closeVillageDropdown();
+  if (!val) return;
+
+  const valNorm = normalizeVietnamese(val); // hàm chuẩn hóa không dấu
+
+  const matches = VILLAGE_OPTIONS.filter(v =>
+    normalizeVietnamese(v).includes(valNorm)
+  );
+
+  if (matches.length === 0) return;
+
+  createVillageDropdown();
+
+  const rect = villageInput.getBoundingClientRect();
+  villageDropdown.style.top = rect.bottom + window.scrollY + "px";
+  villageDropdown.style.left = rect.left + window.scrollX + "px";
+
+  matches.forEach(match => {
+    const li = document.createElement("li");
+    li.textContent = match;
+    li.style.padding = "5px 10px";
+    li.style.cursor = "pointer";
+    li.addEventListener("mousedown", e => {
+      e.preventDefault(); // để không mất focus
+      villageInput.value = match.toUpperCase();
+      closeVillageDropdown();
+    });
+    villageDropdown.appendChild(li);
+  });
+});
+
+document.addEventListener("click", e => {
+  if (e.target !== villageInput && villageDropdown && !villageDropdown.contains(e.target)) {
+    closeVillageDropdown();
+  }
+});
+
+
 // Tạo gợi ý cho trường dân tộc
 function normalizeVietnamese(str) {
   return str
