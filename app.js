@@ -47,64 +47,64 @@ const ETHNICITY_OPTIONS = [
   "LỰ",
 ];
 const VILLAGE_OPTIONS = [
-    "BÌNH AN",
-    "BUÔN ĐÉT",
-    "EA BI",
-    "EA BLÔNG",
-    "EA CHĂM",
-    "EA CHIÊU",
-    "EA ĐINH",
-    "EA ĐỐC",
-    "EA HEO",
-    "EA KANH",
-    "EA KRÁI",
-    "EA LÊ",
-    "EA NGAI",
-    "EA SIM",
-    "HẢI HÀ",
-    "LIÊN KẾT",
-    "QUANG TRUNG",
-    "QUYẾT TÂM",
-    "TÂN AN",
-    "TÂN BẮC",
-    "TÂN BẰNG",
-    "TÂN CHÂU",
-    "TÂN HÀ",
-    "TÂN HIỆP",
-    "TÂN HỢP",
-    "TÂN NAM",
-    "TÂN PHÚ",
-    "TÂN QUẢNG",
-    "TÂN THÀNH",
-    "TÂN TIẾN",
-    "TÂN TRUNG A",
-    "TÂN TRUNG B",
-    "TÂN YÊN",
-    "THANH CAO",
-    "THỐNG NHẤT",
-    "TRUNG HOÀ",
-    "YÊN KHÁNH",
-    "BẮC TRUNG",
-    "BUÔN DLIEYA A",
-    "BUÔN DLIÊYA B",
-    "BUÔN EA DUA",
-    "BUÔN JÚK",
-    "BUÔN KAI",
-    "BUÔN KMANG",
-    "BUÔN KSƠR",
-    "BUÔN TLEH",
-    "BUÔN YOH",
-    "BUÔN YUN",
-    "ĐOÀN KẾT",
-    "ĐỒNG TIẾN",
-    "EA CHIÊU 1",
-    "EA RUẾ",
-    "EABI",
-    "EAKRAI",
-    "EANGAI",
-    "TAN LỘC",
-    "TÂN KỲ",
-    "TÂN MỸ"
+  "BÌNH AN",
+  "BUÔN ĐÉT",
+  "EA BI",
+  "EA BLÔNG",
+  "EA CHĂM",
+  "EA CHIÊU",
+  "EA ĐINH",
+  "EA ĐỐC",
+  "EA HEO",
+  "EA KANH",
+  "EA KRÁI",
+  "EA LÊ",
+  "EA NGAI",
+  "EA SIM",
+  "HẢI HÀ",
+  "LIÊN KẾT",
+  "QUANG TRUNG",
+  "QUYẾT TÂM",
+  "TÂN AN",
+  "TÂN BẮC",
+  "TÂN BẰNG",
+  "TÂN CHÂU",
+  "TÂN HÀ",
+  "TÂN HIỆP",
+  "TÂN HỢP",
+  "TÂN NAM",
+  "TÂN PHÚ",
+  "TÂN QUẢNG",
+  "TÂN THÀNH",
+  "TÂN TIẾN",
+  "TÂN TRUNG A",
+  "TÂN TRUNG B",
+  "TÂN YÊN",
+  "THANH CAO",
+  "THỐNG NHẤT",
+  "TRUNG HOÀ",
+  "YÊN KHÁNH",
+  "BẮC TRUNG",
+  "BUÔN DLIEYA A",
+  "BUÔN DLIÊYA B",
+  "BUÔN EA DUA",
+  "BUÔN JÚK",
+  "BUÔN KAI",
+  "BUÔN KMANG",
+  "BUÔN KSƠR",
+  "BUÔN TLEH",
+  "BUÔN YOH",
+  "BUÔN YUN",
+  "ĐOÀN KẾT",
+  "ĐỒNG TIẾN",
+  "EA CHIÊU 1",
+  "EA RUẾ",
+  "EABI",
+  "EAKRAI",
+  "EANGAI",
+  "TAN LỘC",
+  "TÂN KỲ",
+  "TÂN MỸ",
 ];
 
 const GENDER_OPTIONS = ["NAM", "NỮ"];
@@ -487,9 +487,17 @@ function renderTable(data) {
           ).join("")}
         </select>
       </td>
-      <td><input data-index="${index}" data-field="village" value="${
-      item.village
-    }" /></td>
+      <td>
+        <select data-index="${index}" data-field="village">
+        ${VILLAGE_OPTIONS.map(
+          (village) =>
+            `<option value="${village}" ${
+              item.village?.trim() === village ? "selected" : ""
+          }>${village}</option>`
+        ).join("")}
+        </select>
+      </td>
+
       <td>
         <select data-index="${index}" data-field="old_commune">
           ${OLD_COMMUNE_OPTIONS.map(
@@ -634,7 +642,7 @@ villageInput.addEventListener("input", function () {
 
   const valNorm = normalizeVietnamese(val); // hàm chuẩn hóa không dấu
 
-  const matches = VILLAGE_OPTIONS.filter(v =>
+  const matches = VILLAGE_OPTIONS.filter((v) =>
     normalizeVietnamese(v).includes(valNorm)
   );
 
@@ -646,12 +654,12 @@ villageInput.addEventListener("input", function () {
   villageDropdown.style.top = rect.bottom + window.scrollY + "px";
   villageDropdown.style.left = rect.left + window.scrollX + "px";
 
-  matches.forEach(match => {
+  matches.forEach((match) => {
     const li = document.createElement("li");
     li.textContent = match;
     li.style.padding = "5px 10px";
     li.style.cursor = "pointer";
-    li.addEventListener("mousedown", e => {
+    li.addEventListener("mousedown", (e) => {
       e.preventDefault(); // để không mất focus
       villageInput.value = match.toUpperCase();
       closeVillageDropdown();
@@ -660,12 +668,15 @@ villageInput.addEventListener("input", function () {
   });
 });
 
-document.addEventListener("click", e => {
-  if (e.target !== villageInput && villageDropdown && !villageDropdown.contains(e.target)) {
+document.addEventListener("click", (e) => {
+  if (
+    e.target !== villageInput &&
+    villageDropdown &&
+    !villageDropdown.contains(e.target)
+  ) {
     closeVillageDropdown();
   }
 });
-
 
 // Tạo gợi ý cho trường dân tộc
 function normalizeVietnamese(str) {
