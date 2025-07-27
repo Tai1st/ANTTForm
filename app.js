@@ -216,6 +216,88 @@ document.getElementById("dataForm").addEventListener("submit", function (e) {
       encodeURIComponent(key) + "=" + encodeURIComponent(upperValue)
     );
   }
+  // ✅ Gọi hàm kiểm tra trùng trước khi gửi:
+  checkDuplicateAndSubmit(formData);
+
+  // fetch(WEBAPP_URL, {
+  //   method: "POST",
+  //   body: keyValuePairs.join("&"),
+  //   headers: {
+  //     "Content-Type": "application/x-www-form-urlencoded",
+  //   },
+  // })
+  //   .then((res) => res.json())
+  //   .then((data) => {
+  //     if (data.status === "success") {
+  //       messageEl.textContent = "✅ Gửi thành công!";
+  //       messageEl.style.color = "green";
+  //       form.reset();
+  //     } else {
+  //       throw new Error(data.message || "Đã có lỗi xảy ra.");
+  //     }
+  //   })
+  //   .catch((err) => {
+  //     messageEl.textContent = "❌ Gửi thất bại: " + err.message;
+  //     messageEl.style.color = "red";
+  //   })
+  //   .finally(() => {
+  //     submitBtn.disabled = false;
+  //     hideLoading(); // Ẩn spinner
+  //     setTimeout(() => {
+  //       messageEl.style.display = "none";
+  //     }, 4000);
+  //   });
+});
+function checkDuplicateAndSubmit(formData) {
+  const inputName = formData.get("name").trim().toUpperCase();
+  const inputBirthdate = formatDate(formData.get("birthdate").trim());
+  const messageEl = document.getElementById("message");
+  const submitBtn = document.getElementById("submit-button");
+
+  fetch(WEBAPP_URL + "?mode=read")
+    .then((res) => res.json())
+    .then((data) => {
+      const exists = data.some(
+        (item) =>
+          item.name === inputName &&
+          formatDate(item.birthdate) === inputBirthdate
+      );
+
+      if (exists) {
+        messageEl.textContent =
+          "❌ Họ tên và ngày sinh đã tồn tại trong hệ thống.";
+        messageEl.style.color = "red";
+        messageEl.style.display = "block";
+        document.getElementById("name").classList.add("error");
+        document.getElementById("birthdate").classList.add("error");
+        submitBtn.disabled = false;
+        hideLoading();
+      } else {
+        sendFormData(formData);
+      }
+    })
+    .catch((err) => {
+      messageEl.textContent = "❌ Lỗi kiểm tra trùng: " + err.message;
+      messageEl.style.color = "red";
+      messageEl.style.display = "block";
+      submitBtn.disabled = false;
+      hideLoading();
+    });
+}
+function sendFormData(formData) {
+  const messageEl = document.getElementById("message");
+  const submitBtn = document.getElementById("submit-button");
+
+  const keyValuePairs = [];
+  for (const [key, value] of formData.entries()) {
+    let upperValue = typeof value === "string" ? value.toUpperCase() : value;
+    if (key === "phone" || key === "bank") {
+      upperValue = "'" + upperValue;
+    }
+    keyValuePairs.push(
+      encodeURIComponent(key) + "=" + encodeURIComponent(upperValue)
+    );
+  }
 
   fetch(WEBAPP_URL, {
     method: "POST",
@@ -229,7 +311,9 @@ document.getElementById("dataForm").addEventListener("submit", function (e) {
       if (data.status === "success") {
         messageEl.textContent = "✅ Gửi thành công!";
         messageEl.style.color = "green";
-        form.reset();
+        document.getElementById("dataForm").reset();
+        loadFromLocalStorage(); // làm mới bảng
+        fetchAndRender();
       } else {
         throw new Error(data.message || "Đã có lỗi xảy ra.");
       }
@@ -240,12 +324,12 @@ document.getElementById("dataForm").addEventListener("submit", function (e) {
     })
     .finally(() => {
       submitBtn.disabled = false;
-      hideLoading(); // Ẩn spinner
+      hideLoading();
       setTimeout(() => {
         messageEl.style.display = "none";
       }, 4000);
     });
-});
+}
 
 let dataCache = [];
 
@@ -325,8 +409,8 @@ function renderTable(data) {
         <select data-index="${index}" data-field="gender">
           ${GENDER_OPTIONS.map(
             (gender) =>
-            `<option value="${gender}" ${
-                 item.gender === gender ? "selected" : ""
+              `<option value="${gender}" ${
+                item.gender === gender ? "selected" : ""
               }>${gender}</option>`
           ).join("")}
         </select>
