@@ -44,8 +44,9 @@ const ETHNICITY_OPTIONS = [
   "CỐNG",
   "SI LA",
   "PU PÉO",
-  "LỰ"
+  "LỰ",
 ];
+const GENDER_OPTIONS = ["NAM", "NỮ"];
 const OLD_COMMUNE_OPTIONS = ["ĐLIÊ YA", "EA TOH", "EA TÂN"];
 const ROLE_OPTIONS = ["TỔ TRƯỞNG", "TỔ PHÓ", "THÀNH VIÊN"];
 const WEBAPP_URL =
@@ -60,7 +61,7 @@ $("#birthdate").datepicker({
 });
 
 // Viết hoa tự động các trường name, village, ethnicity
-["name", "village","old_commune", "ethnicity"].forEach((id) => {
+["name", "village", "old_commune", "ethnicity"].forEach((id) => {
   const input = document.getElementById(id);
   if (input) {
     input.addEventListener("input", () => {
@@ -89,7 +90,7 @@ document.getElementById("dataForm").addEventListener("submit", function (e) {
   const messageEl = document.getElementById("message");
   const submitBtn = document.getElementById("submit-button");
   let valid = true;
-  
+
   messageEl.style.display = "none";
 
   // Xóa lỗi cũ
@@ -108,7 +109,7 @@ document.getElementById("dataForm").addEventListener("submit", function (e) {
     "old_commune",
     "ethnicity",
     "phone",
-    "bank"
+    "bank",
   ];
   requiredFields.forEach((key) => {
     const input =
@@ -200,22 +201,21 @@ document.getElementById("dataForm").addEventListener("submit", function (e) {
   messageEl.style.color = "#333";
   messageEl.style.display = "block";
   submitBtn.disabled = true;
-   showLoading();
+  showLoading();
   // Chuẩn bị dữ liệu gửi lên Google Sheets
   const keyValuePairs = [];
   for (const [key, value] of formData.entries()) {
-  let upperValue = typeof value === "string" ? value.toUpperCase() : value;
+    let upperValue = typeof value === "string" ? value.toUpperCase() : value;
 
-  // Thêm dấu ' cho phone và bank
-  if (key === "phone" || key === "bank") {
-    upperValue = "'" + upperValue;
+    // Thêm dấu ' cho phone và bank
+    if (key === "phone" || key === "bank") {
+      upperValue = "'" + upperValue;
+    }
+
+    keyValuePairs.push(
+      encodeURIComponent(key) + "=" + encodeURIComponent(upperValue)
+    );
   }
-
-  keyValuePairs.push(
-    encodeURIComponent(key) + "=" + encodeURIComponent(upperValue)
-  );
-}
-
 
   fetch(WEBAPP_URL, {
     method: "POST",
@@ -240,7 +240,7 @@ document.getElementById("dataForm").addEventListener("submit", function (e) {
     })
     .finally(() => {
       submitBtn.disabled = false;
-       hideLoading(); // Ẩn spinner
+      hideLoading(); // Ẩn spinner
       setTimeout(() => {
         messageEl.style.display = "none";
       }, 4000);
@@ -281,7 +281,6 @@ document.getElementById("searchInput").addEventListener("input", function () {
   });
 });
 
-
 // Format ngày sinh về dd/mm/yyyy
 function formatDate(d) {
   if (!d || typeof d !== "string") return "";
@@ -317,29 +316,42 @@ function renderTable(data) {
 
     tr.innerHTML = `
       <td>${index + 1}</td>
-      <td><input data-index="${index}" data-field="name" value="${item.name}" /></td>
+      <td><input data-index="${index}" data-field="name" value="${
+      item.name
+    }" /></td>
       <td><input data-index="${index}" data-field="birthdate" value="${birthdate}" /></td>
       <td>${item.age ?? ""}</td> <!-- Thêm cột tuổi -->
       <td>
         <select data-index="${index}" data-field="gender">
-          <option value="Nam" ${item.gender === "Nam" ? "selected" : ""}>Nam</option>
-          <option value="Nữ" ${item.gender === "Nữ" ? "selected" : ""}>Nữ</option>
+          ${GENDER_OPTIONS.map(
+            (gender) =>
+            `<option value="${gender}" ${
+                 item.gender === gender ? "selected" : ""
+              }>${gender}</option>`
+          ).join("")}
         </select>
       </td>
+
       <td>
         <select data-index="${index}" data-field="position">
           ${ROLE_OPTIONS.map(
             (role) =>
-              `<option value="${role}" ${item.position === role ? "selected" : ""}>${role}</option>`
+              `<option value="${role}" ${
+                item.position === role ? "selected" : ""
+              }>${role}</option>`
           ).join("")}
         </select>
       </td>
-      <td><input data-index="${index}" data-field="village" value="${item.village}" /></td>
+      <td><input data-index="${index}" data-field="village" value="${
+      item.village
+    }" /></td>
       <td>
         <select data-index="${index}" data-field="old_commune">
           ${OLD_COMMUNE_OPTIONS.map(
             (commune) =>
-              `<option value="${commune}" ${item.old_commune === commune ? "selected" : ""}>${commune}</option>`
+              `<option value="${commune}" ${
+                item.old_commune === commune ? "selected" : ""
+              }>${commune}</option>`
           ).join("")}
         </select>
       </td>
@@ -347,12 +359,18 @@ function renderTable(data) {
         <select data-index="${index}" data-field="ethnicity">
           ${ETHNICITY_OPTIONS.map(
             (eth) =>
-              `<option value="${eth}" ${item.ethnicity === eth ? "selected" : ""}>${eth}</option>`
+              `<option value="${eth}" ${
+                item.ethnicity === eth ? "selected" : ""
+              }>${eth}</option>`
           ).join("")}
         </select>
       </td>
-      <td><input data-index="${index}" data-field="phone" value="${item.phone}" /></td>
-      <td><input data-index="${index}" data-field="bank" value="${item.bank ?? ""}" /></td>
+      <td><input data-index="${index}" data-field="phone" value="${
+      item.phone
+    }" /></td>
+      <td><input data-index="${index}" data-field="bank" value="${
+      item.bank ?? ""
+    }" /></td>
       <td><button class="save-btn btn btn-success btn-sm" data-index="${index}">Lưu</button></td>
     `;
     tbody.appendChild(tr);
@@ -361,54 +379,53 @@ function renderTable(data) {
   bindSaveButtons(data);
 }
 
-
 // Gắn sự kiện cho các nút "Lưu"
 function bindSaveButtons(data) {
   document.querySelectorAll(".save-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
-  const index = parseInt(btn.getAttribute("data-index"), 10);
-  const row = document.querySelectorAll("#tableBody tr")[index];
-  const inputs = row.querySelectorAll("input, select");
+      const index = parseInt(btn.getAttribute("data-index"), 10);
+      const row = document.querySelectorAll("#tableBody tr")[index];
+      const inputs = row.querySelectorAll("input, select");
 
-  const updatedData = {
-    rowIndex: index + 2,
-  };
+      const updatedData = {
+        rowIndex: index + 2,
+      };
 
-  inputs.forEach((input) => {
-    const field = input.getAttribute("data-field");
-    updatedData[field] = input.value.toUpperCase();
-  });
+      inputs.forEach((input) => {
+        const field = input.getAttribute("data-field");
+        updatedData[field] = input.value.toUpperCase();
+      });
 
-  // Hiện spinner trong nút
-  btn.disabled = true;
-   showLoading();
-  const originalText = btn.innerHTML;
-  btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang lưu...`;
+      // Hiện spinner trong nút
+      btn.disabled = true;
+      showLoading();
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang lưu...`;
 
-  fetch(WEBAPP_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams(updatedData),
-  })
-    .then((res) => res.json())
-    .then((json) => {
-      if (json.status === "success") {
-        alert("✅ Lưu thành công!");
-        data[index] = updatedData;
-        localStorage.setItem("dataCache", JSON.stringify(data));
-      } else {
-        alert("❌ Lỗi: " + json.message);
-      }
-    })
-    .catch((err) => {
-      alert("❌ Kết nối thất bại: " + err.message);
-    })
-    .finally(() => {
-      btn.disabled = false;
-      hideLoading(); // Ẩn spinner
-      btn.innerHTML = originalText;
+      fetch(WEBAPP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(updatedData),
+      })
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.status === "success") {
+            alert("✅ Lưu thành công!");
+            data[index] = updatedData;
+            localStorage.setItem("dataCache", JSON.stringify(data));
+          } else {
+            alert("❌ Lỗi: " + json.message);
+          }
+        })
+        .catch((err) => {
+          alert("❌ Kết nối thất bại: " + err.message);
+        })
+        .finally(() => {
+          btn.disabled = false;
+          hideLoading(); // Ẩn spinner
+          btn.innerHTML = originalText;
+        });
     });
-});
   });
 }
 
@@ -420,7 +437,6 @@ function loadFromLocalStorage() {
       const parsed = JSON.parse(cache);
       renderTable(parsed);
       refreshTablePagination();
-
     }
   } catch (e) {
     console.warn("Không thể tải từ localStorage");
@@ -435,7 +451,6 @@ function fetchAndRender() {
       localStorage.setItem("dataCache", JSON.stringify(data));
       renderTable(data);
       refreshTablePagination();
-
     })
     .catch((err) => {
       console.error("Không thể tải dữ liệu:", err.message);
@@ -514,13 +529,12 @@ document.addEventListener("click", (e) => {
   }
 });
 function showLoading() {
-  document.getElementById('loadingOverlay').style.display = 'flex';
+  document.getElementById("loadingOverlay").style.display = "flex";
 }
 
 function hideLoading() {
-  document.getElementById('loadingOverlay').style.display = 'none';
+  document.getElementById("loadingOverlay").style.display = "none";
 }
-
 
 const rowsPerPage = 10;
 let currentPage = 1;
@@ -534,7 +548,7 @@ function displayTablePage(page) {
   const totalPages = Math.ceil(totalRows / rowsPerPage);
 
   // Ẩn tất cả dòng
-  rows.forEach(row => (row.style.display = "none"));
+  rows.forEach((row) => (row.style.display = "none"));
 
   // Hiển thị các dòng của trang hiện tại
   const start = (page - 1) * rowsPerPage;
@@ -572,7 +586,7 @@ function renderPagination(totalPages) {
   const prev = document.createElement("li");
   prev.className = "page-item " + (currentPage === 1 ? "disabled" : "");
   prev.innerHTML = `<a class="page-link" href="#">Prev</a>`;
-  prev.onclick = e => {
+  prev.onclick = (e) => {
     e.preventDefault();
     if (currentPage > 1) displayTablePage(currentPage - 1);
   };
@@ -583,7 +597,7 @@ function renderPagination(totalPages) {
     const li = document.createElement("li");
     li.className = "page-item " + (i === currentPage ? "active" : "");
     li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-    li.onclick = e => {
+    li.onclick = (e) => {
       e.preventDefault();
       displayTablePage(i);
     };
@@ -592,20 +606,23 @@ function renderPagination(totalPages) {
 
   // Next button
   const next = document.createElement("li");
-  next.className = "page-item " + (currentPage === totalPages ? "disabled" : "");
+  next.className =
+    "page-item " + (currentPage === totalPages ? "disabled" : "");
   next.innerHTML = `<a class="page-link" href="#">Next</a>`;
-  next.onclick = e => {
+  next.onclick = (e) => {
     e.preventDefault();
     if (currentPage < totalPages) displayTablePage(currentPage + 1);
   };
   pagination.appendChild(next);
 }
 
-
 // Hàm gọi mỗi khi cập nhật dữ liệu bảng
 function refreshTablePagination() {
   const rows = tableBody.querySelectorAll("tr");
-  if (rows.length === 0 || (rows.length === 1 && rows[0].querySelector("td").colSpan > 1)) {
+  if (
+    rows.length === 0 ||
+    (rows.length === 1 && rows[0].querySelector("td").colSpan > 1)
+  ) {
     pagination.innerHTML = "";
     return;
   }
