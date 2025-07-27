@@ -79,7 +79,8 @@
             <div class="field">
                 <label for="ethnicity">Dân tộc</label>
                 <input type="text" id="ethnicity" name="ethnicity" placeholder="Tên dân tộc" />
-                <div class="error-msg"></div>
+                <div class="error-msg">
+                </div>
             </div>
 
             <div class="field">
@@ -87,9 +88,13 @@
                 <input type="tel" id="phone" name="phone" placeholder="VD: 0912345678" maxlength="11" />
                 <div class="error-msg"></div>
             </div>
-
-            <button type="submit" id="submit-button">Gửi thông tin</button>
-            <div id="message"></div>
+            <div class="field">
+                <label for="bank">Số tài khoản ngân hàng</label>
+                <input type="text" id="bank" name="bank" placeholder="Nhập số tài khoản ngân hàng" />
+                <div class="error-msg"></div>
+            </div>
+                <button type="submit" id="submit-button">Gửi thông tin</button>
+                <div id="message"></div>
         </form>
         <button class="btn btn-outline-dark w-100" id="viewListBtn" style="margin-top: 8px">
             🔍 Xem danh sách
@@ -114,6 +119,7 @@
                         <th>Xã cũ</th> <!-- Thêm cột TÊN XÃ CŨ -->
                         <th>Dân tộc</th>
                         <th>SĐT</th>
+                        <th>BANK</th>
                         <th>Hành động</th>
                     </tr>
                 </thead>

@@ -49,7 +49,7 @@ const ETHNICITY_OPTIONS = [
 const OLD_COMMUNE_OPTIONS = ["ĐLIÊ YA", "EA TOH", "EA TÂN"];
 const ROLE_OPTIONS = ["TỔ TRƯỞNG", "TỔ PHÓ", "THÀNH VIÊN"];
 const WEBAPP_URL =
-  "https://script.google.com/macros/s/AKfycbzRmpuD2BxWWI1-9jCTqUE8hLu5jftmxIZYRJGVp_DgcjEQab54sfJnGGx3X1kKPpMssg/exec";
+  "https://script.google.com/macros/s/AKfycbwdE8Gce0-Ik1TB3ZsMWhnrmss9Md3dEzDGDhNVIPoGkYsCsE_JDtTnsADV4IXNyQBFVA/exec";
 
 $("#birthdate").datepicker({
   format: "dd/mm/yyyy",
@@ -108,6 +108,7 @@ document.getElementById("dataForm").addEventListener("submit", function (e) {
     "old_commune",
     "ethnicity",
     "phone",
+    "bank"
   ];
   requiredFields.forEach((key) => {
     const input =
@@ -203,12 +204,18 @@ document.getElementById("dataForm").addEventListener("submit", function (e) {
   // Chuẩn bị dữ liệu gửi lên Google Sheets
   const keyValuePairs = [];
   for (const [key, value] of formData.entries()) {
-    let upperValue = typeof value === "string" ? value.toUpperCase() : value;
-    if (key === "phone") upperValue = "'" + upperValue; // giữ số 0 đầu
-    keyValuePairs.push(
-      encodeURIComponent(key) + "=" + encodeURIComponent(upperValue)
-    );
+  let upperValue = typeof value === "string" ? value.toUpperCase() : value;
+
+  // Thêm dấu ' cho phone và bank
+  if (key === "phone" || key === "bank") {
+    upperValue = "'" + upperValue;
   }
+
+  keyValuePairs.push(
+    encodeURIComponent(key) + "=" + encodeURIComponent(upperValue)
+  );
+}
+
 
   fetch(WEBAPP_URL, {
     method: "POST",
@@ -345,6 +352,7 @@ function renderTable(data) {
         </select>
       </td>
       <td><input data-index="${index}" data-field="phone" value="${item.phone}" /></td>
+      <td><input data-index="${index}" data-field="bank" value="${item.bank ?? ""}" /></td>
       <td><button class="save-btn btn btn-success btn-sm" data-index="${index}">Lưu</button></td>
     `;
     tbody.appendChild(tr);
