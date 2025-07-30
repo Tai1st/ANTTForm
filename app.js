@@ -108,7 +108,7 @@ const VILLAGE_OPTIONS = [
 ];
 
 const GENDER_OPTIONS = ["NAM", "NỮ"];
-const OLD_COMMUNE_OPTIONS = ["ĐLIÊ YA", "EA TOH", "EA TÂN"];
+const OLD_COMMUNE_OPTIONS = ["DLIÊ YA", "EA TOH", "EA TÂN"];
 const ROLE_OPTIONS = ["TỔ TRƯỞNG", "TỔ PHÓ", "THÀNH VIÊN"];
 const WEBAPP_URL =
   "https://script.google.com/macros/s/AKfycbwdE8Gce0-Ik1TB3ZsMWhnrmss9Md3dEzDGDhNVIPoGkYsCsE_JDtTnsADV4IXNyQBFVA/exec";
