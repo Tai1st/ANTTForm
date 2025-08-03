@@ -99,10 +99,7 @@ const VILLAGE_OPTIONS = [
   "ĐỒNG TIẾN",
   "EA CHIÊU 1",
   "EA RUẾ",
-  "EABI",
-  "EAKRAI",
-  "EANGAI",
-  "TAN LỘC",
+  "TÂN LỘC",
   "TÂN KỲ",
   "TÂN MỸ",
 ];
